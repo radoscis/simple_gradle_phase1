@@ -20,15 +20,19 @@ stages:
         testResultsFiles: '**/TEST-*.xml'
         tasks: 'build'
     #- script: 'sudo apt-get update ; sudo apt-get -y install tree ; tree'
-    - script: 'echo $(System.DefaultWorkingDirectory) ; echo $(Build.BinariesDirectory)'
-    - script: 'ls -la $(System.DefaultWorkingDirectory) ; ls -la $(Build.BinariesDirectory)'
-    - script: 'touch $(Build.BinariesDirectory)/testfile'
+    - script: 'touch $(System.DefaultWorkingDirectory)/file_DefaultWorkingDirectory'
+    - script: 'echo "System.DefaultWorkingDirectory = $(System.DefaultWorkingDirectory)" ; ls -al $(System.DefaultWorkingDirectory)'
+    - script: 'touch $(Build.BinariesDirectory)/file_BinariesDirectory'
+    - script: 'echo "Build.BinariesDirectory = $(Build.BinariesDirectory)" ; ls -al $(Build.BinariesDirectory)'
+    - script: 'touch $(Agent.BuildDirectory)/file_AgentBuildDirectory'
+    - script: 'echo "Agent.BuildDirectory = $(Agent.BuildDirectory)" ; ls -al $(Agent.BuildDirectory)'
 - stage: ArchiveArtifacts
   jobs:
   - job: 'ArchiveJob'
     steps:
-    - script: 'echo $(System.DefaultWorkingDirectory) ; echo $(Build.BinariesDirectory)'
-    - script: 'ls -la $(System.DefaultWorkingDirectory) ; ls -la $(Build.BinariesDirectory)'
+    - script: 'echo "System.DefaultWorkingDirectory = $(System.DefaultWorkingDirectory)" ; ls -al $(System.DefaultWorkingDirectory)'
+    - script: 'echo "Build.BinariesDirectory = $(Build.BinariesDirectory)" ; ls -al $(Build.BinariesDirectory)'
+    - script: 'echo "Agent.BuildDirectory = $(Agent.BuildDirectory)" ; ls -al $(Agent.BuildDirectory)'
     - task: ArchiveFiles@2
       inputs:
         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build'
