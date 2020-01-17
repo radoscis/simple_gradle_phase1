@@ -37,7 +37,7 @@ stages:
         rootFolderOrFile: '$(Pipeline.Workspace)/libs'
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-    - taks: AzureFileCopy@3
+    - task: AzureFileCopy@3
       inputs:
         sourcePath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'      
         destination: azureBlob
