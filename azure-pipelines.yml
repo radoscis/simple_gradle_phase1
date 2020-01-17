@@ -1,5 +1,5 @@
 trigger:
-- test
+- stashArtifacts
 pool:
   vmImage: 'ubuntu-latest'
 
