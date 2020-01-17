@@ -19,3 +19,13 @@ stages:
         publishJUnitResults: true
         testResultsFiles: '**/TEST-*.xml'
         tasks: 'build'
+- stage: ArchiveArtifacts
+  jobs:
+  - job: 'ArchiveJob'
+    steps:
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: 'Build/*.jar'
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+        
