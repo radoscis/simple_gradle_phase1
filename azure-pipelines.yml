@@ -30,7 +30,7 @@ stages:
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: gradleBuild
-        patterns: '**/*.jar'
+        patterns: '**/*'
     - script: 'echo "Pipeline.Workspace = $(Pipeline.Workspace)" ; ls -al $(Pipeline.Workspace)'
     - task: ArchiveFiles@2
       inputs:
