@@ -39,8 +39,7 @@ stages:
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     - taks: AzureFileCopy@3
       inputs:
-        sourcePath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-        azureSubscription: 
+        sourcePath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'      
         destination: azureBlob
         #azureSubscription: '83240f0b-c5c5-48a0-a2a9-c64cae45698f'
         azureSubscription: 'nav-pipeline-dev'
