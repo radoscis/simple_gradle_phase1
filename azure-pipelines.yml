@@ -19,7 +19,7 @@ stages:
         publishJUnitResults: true
         testResultsFiles: '**/TEST-*.xml'
         tasks: 'build'
-    - script: 'tree'
+    - script: 'apt-get update ; apt-get -y install tree ; tree'
 - stage: ArchiveArtifacts
   jobs:
   - job: 'ArchiveJob'
