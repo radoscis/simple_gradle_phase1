@@ -26,6 +26,6 @@ stages:
     steps:
     - task: ArchiveFiles@2
       inputs:
-        rootFolderOrFile: 'Build/*.jar'
+        rootFolderOrFile: 'build/*.jar'
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
