@@ -22,6 +22,7 @@ stages:
     #- script: 'sudo apt-get update ; sudo apt-get -y install tree ; tree'
     - script: 'echo $(System.DefaultWorkingDirectory) ; echo $(Build.BinariesDirectory)'
     - script: 'ls -la $(System.DefaultWorkingDirectory) ; ls -la $(Build.BinariesDirectory)'
+    - script: 'touch $(Build.BinariesDirectory)/testfile'
 - stage: ArchiveArtifacts
   jobs:
   - job: 'ArchiveJob'
