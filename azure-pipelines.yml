@@ -30,7 +30,7 @@ stages:
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: gradleBuild
-    - script: 'echo "System.DefaultWorkingDirectory = $(System.DefaultWorkingDirectory)" ; ls -al $(System.DefaultWorkingDirectory)'
+    - script: 'echo "Pipeline.Workspace = $(Pipeline.Workspace)" ; ls -al $(Pipeline.Workspace)'
     - task: ArchiveFiles@2
       inputs:
         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build'
