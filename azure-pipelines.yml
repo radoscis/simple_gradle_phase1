@@ -40,9 +40,8 @@ stages:
     - task: AzureFileCopy@3
       inputs:
         sourcePath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'      
-        destination: azureBlob
-        #azureSubscription: '83240f0b-c5c5-48a0-a2a9-c64cae45698f'
-        azureSubscription: 'nav-pipeline-dev'
+        Destination: 'AzureBlob'
+        azureSubscription: 'rcAzureRMConnection'
         storage: 'azurepocstorageforgradle'
         ContainerName: 'azurepocscontainerforgradle'
         #outputStorageUri: 'https://radoslaw.cisz@tomtom.com.blob.core.windows.net'
