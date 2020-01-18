@@ -24,6 +24,8 @@ stages:
         path: $(System.DefaultWorkingDirectory)/build
         artifact: gradleBuild    
 - stage: ArchiveArtifacts
+  pool: 
+    vmImage: windows-latest
   jobs:
   - job: 'ArchiveJob'
     steps:
@@ -44,9 +46,4 @@ stages:
         azureSubscription: 'rcAzureRMConnection'
         storage: 'azurepocstorageforgradle'
         ContainerName: 'azurepocscontainerforgradle'
-        #outputStorageUri: 'https://radoslaw.cisz@tomtom.com.blob.core.windows.net'
-        #outputStorageUri: 'https://azurepocstorageforgradle.blob.core.windows.net/azurepocscontainerforgradle?sp=racwdl&st=2020-01-17T12:41:29Z&se=2020-01-18T12:41:29Z&sv=2019-02-02&sr=c&sig=QwQjLuv04c0CiqyChDvIQXwCgloMZzNQ63C14yvMufc%3D'
-        #outputStorageContainerSasToken: Parameters.outputStorageContainerSasToken        
-        #?sp=racwdl&st=2020-01-17T12:41:29Z&se=2020-01-18T12:41:29Z&sv=2019-02-02&sr=c&sig=QwQjLuv04c0CiqyChDvIQXwCgloMZzNQ63C14yvMufc%3D
-        #sasTokenTimeOutInMinutes: 5
 
