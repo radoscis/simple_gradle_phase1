@@ -4,6 +4,13 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
+- stage: 'Test'
+  jobs:
+  - job: TestJob
+  steps:
+  - task: script: |
+      echo $(PROXY_USER)
+      echo $(PROXY_PASS)
 - stage: 'Build'
   jobs:
   - job: BuildJob
@@ -18,13 +25,13 @@ stages:
         jdkArchitectureOption: 'x64'
         publishJUnitResults: true
         testResultsFiles: '**/TEST-*.xml'
-        tasks: 'build'    
+        tasks: 'build'
     - task: PublishPipelineArtifact@1
       inputs:
         path: $(System.DefaultWorkingDirectory)/build
-        artifact: gradleBuild    
+        artifact: gradleBuild
 - stage: ArchiveArtifacts
-  pool: 
+  pool:
     vmImage: windows-latest
   jobs:
   - job: 'ArchiveJob'
@@ -41,7 +48,7 @@ stages:
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     - task: AzureFileCopy@3
       inputs:
-        sourcePath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'      
+        sourcePath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
         Destination: 'AzureBlob'
         azureSubscription: 'rcAzureRMConnection'
         storage: 'azurepocstorageforgradle'
