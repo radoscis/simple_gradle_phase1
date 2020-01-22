@@ -2,15 +2,17 @@ trigger:
 - stashArtifacts
 pool:
   vmImage: 'ubuntu-latest'
+variables:
+- group: PROXY_SETTINGS
 
 stages:
 - stage: 'Test'
   jobs:
   - job: TestJob
-  steps:
-  - task: script: |
-      echo $(PROXY_USER)
-      echo $(PROXY_PASS)
+    steps:
+    - script: echo $pass
+      env:
+        pass: $(PROXY_PASS)
 - stage: 'Build'
   jobs:
   - job: BuildJob
