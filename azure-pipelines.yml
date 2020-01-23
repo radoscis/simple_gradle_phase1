@@ -10,7 +10,9 @@ stages:
   jobs:
   - job: TestJob
     steps:
-    - script: echo $pass
+    - script: | 
+        echo $pass
+        echo $PROXY_USER
       env:
         pass: $(PROXY_PASS)
 - stage: 'Build'
