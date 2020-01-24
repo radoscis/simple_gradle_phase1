@@ -1,31 +1,48 @@
-group 'info.garagesalesapp'
-version '1.0-SNAPSHOT'
+buildscript {
+    repositories {
+        maven {
+             url "https://artifactory.navkit-pipeline.tt3.com/artifactory/gradle-plugins-remote"
+        }
+        mavenCentral()
+    }
+}
 
-apply plugin: 'java'
-
-sourceCompatibility = 1.8
+plugins {
+     id 'net.researchgate.release' version '2.3.2'
+}
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile project(':json-display')
+group 'info.garagesalesapp'
+
+apply plugin: 'java'
+project.sourceCompatibility = 1.8
+
+wrapper {
+    gradleVersion = '4.10.2'
 }
 
+apply plugin: 'net.researchgate.release'
 apply plugin: 'project-report'
 
-task showDate {
-    dependsOn build
-    group = 'my tasks'
-    description = "Show current date"
-    doLast{
-        println ""
-        println 'Current Date: ' + new Date()
-        println ""
-    }
+project.dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
 }
+
+release {
+    tagTemplate = '${name}-${version}'
+    versionPropertyFile = 'gradle.properties'
+    buildTasks = ["build"]
+        git {
+            requireBranch = '(master|release/.*)'
+        }
+}
+
+ext.'release.useAutomaticVersion' = "true"
 
 
 

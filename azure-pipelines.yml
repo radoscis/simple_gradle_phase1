@@ -10,7 +10,7 @@ stages:
   jobs:
   - job: TestJob
     steps:
-    - script: | 
+    - script: |
         echo $pass
         echo $PROXY_USER
       env:
@@ -29,7 +29,7 @@ stages:
         jdkArchitectureOption: 'x64'
         publishJUnitResults: true
         testResultsFiles: '**/TEST-*.xml'
-        tasks: 'build'
+        tasks: 'release'
     - task: PublishPipelineArtifact@1
       inputs:
         path: $(System.DefaultWorkingDirectory)/build
