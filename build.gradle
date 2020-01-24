@@ -38,7 +38,7 @@ release {
     versionPropertyFile = 'gradle.properties'
     buildTasks = ["build"]
         git {
-            requireBranch = '(master|release/.*)'
+            requireBranch = '(master|release/.*|stashArtifacts)'
         }
 }
 
