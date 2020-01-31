@@ -1,0 +1,58 @@
+trigger:
+- stashArtifacts
+pool:
+  vmImage: 'ubuntu-latest'
+variables:
+- group: PROXY_SETTINGS
+
+stages:
+- stage: 'Test'
+  jobs:
+  - job: TestJob
+    steps:
+    - script: echo $pass
+      env:
+        pass: $(PROXY_PASS)
+- stage: 'Build'
+  jobs:
+  - job: BuildJob
+    steps:
+    - task: Gradle@2
+      inputs:
+        workingDirectory: ''
+        gradleWrapperFile: 'gradlew'
+        gradleOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.8'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: true
+        testResultsFiles: '**/TEST-*.xml'
+        tasks: 'build'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: $(System.DefaultWorkingDirectory)/build
+        artifact: gradleBuild
+- stage: ArchiveArtifacts
+  pool:
+    vmImage: windows-latest
+  jobs:
+  - job: 'ArchiveJob'
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: gradleBuild
+        patterns: '**/*.jar'
+    - script: 'echo "Pipeline.Workspace = $(Pipeline.Workspace)" ; ls -al $(Pipeline.Workspace)'
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: '$(Pipeline.Workspace)/libs'
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    - task: AzureFileCopy@3
+      inputs:
+        sourcePath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+        Destination: 'AzureBlob'
+        azureSubscription: 'rcAzureRMConnection'
+        storage: 'azurepocstorageforgradle'
+        ContainerName: 'azurepocscontainerforgradle'
+
