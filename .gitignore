@@ -3,4 +3,4 @@
 .project
 .vscode
 build
-**/*.jar
+**/jar
