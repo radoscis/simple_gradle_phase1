@@ -1,55 +1,58 @@
-# Gradle
-# Build your Java project and run tests with Gradle using a Gradle wrapper script.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
-
 trigger:
-- master
-
+- stashArtifacts
 pool:
   vmImage: 'ubuntu-latest'
+variables:
+- group: PROXY_SETTINGS
 
 stages:
+- stage: 'Test'
+  jobs:
+  - job: TestJob
+    steps:
+    - script: echo $pass
+      env:
+        pass: $(PROXY_PASS)
 - stage: 'Build'
   jobs:
-  - job: 'Build job'
+  - job: BuildJob
     steps:
     - task: Gradle@2
-        inputs:
-          workingDirectory: ''
-          gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m'
-          javaHomeOption: 'JDKVersion'
-          jdkVersionOption: '1.8'
-          jdkArchitectureOption: 'x64'
-          publishJUnitResults: true
-          testResultsFiles: '**/TEST-*.xml'
-          tasks: 'build'
-- stage: 'ArchiveArtifacts'
+      inputs:
+        workingDirectory: ''
+        gradleWrapperFile: 'gradlew'
+        gradleOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.8'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: true
+        testResultsFiles: '**/TEST-*.xml'
+        tasks: 'build'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: $(System.DefaultWorkingDirectory)/build
+        artifact: gradleBuild
+- stage: ArchiveArtifacts
+  pool:
+    vmImage: windows-latest
   jobs:
-  - job: 'Archive Job'
+  - job: 'ArchiveJob'
     steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: gradleBuild
+        patterns: '**/*.jar'
+    - script: 'echo "Pipeline.Workspace = $(Pipeline.Workspace)" ; ls -al $(Pipeline.Workspace)'
     - task: ArchiveFiles@2
       inputs:
-        rootFolderOrFile: 'Build/*.jar'
+        rootFolderOrFile: '$(Pipeline.Workspace)/libs'
         archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip' 
-        replaceExistingArchive: true 
-- stage: 'Publish to Container'
-  jobs:
-  - job: 'Copy archived artifacts'
-    steps:
-    - taks: AzureFileCopy@3
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    - task: AzureFileCopy@3
       inputs:
         sourcePath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-        azureSubscription: 
-        destination: azureBlob
-        #azureSubscription: '83240f0b-c5c5-48a0-a2a9-c64cae45698f'
-        azureSubscription: 'nav-pipeline-dev'
+        Destination: 'AzureBlob'
+        azureSubscription: 'rcAzureRMConnection'
         storage: 'azurepocstorageforgradle'
         ContainerName: 'azurepocscontainerforgradle'
-        #outputStorageUri: 'https://radoslaw.cisz@tomtom.com.blob.core.windows.net'
-        #outputStorageUri: 'https://azurepocstorageforgradle.blob.core.windows.net/azurepocscontainerforgradle?sp=racwdl&st=2020-01-17T12:41:29Z&se=2020-01-18T12:41:29Z&sv=2019-02-02&sr=c&sig=QwQjLuv04c0CiqyChDvIQXwCgloMZzNQ63C14yvMufc%3D'
-        #outputStorageContainerSasToken: Parameters.outputStorageContainerSasToken        
-        #?sp=racwdl&st=2020-01-17T12:41:29Z&se=2020-01-18T12:41:29Z&sv=2019-02-02&sr=c&sig=QwQjLuv04c0CiqyChDvIQXwCgloMZzNQ63C14yvMufc%3D
-        #sasTokenTimeOutInMinutes: 5
+
