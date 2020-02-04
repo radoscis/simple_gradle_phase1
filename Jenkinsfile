@@ -27,11 +27,16 @@ pipeline {
                 withCredentials([string(credentialsId: 'ADO_PAT', variable: 'ADO_PAT')]) {
                     withEnv(["AZURE_DEVOPS_EXT_PAT=$ADO_PAT"]) {
                         sh 'az devops configure --defaults organization=https://dev.azure.com/tomtomweb project="Nav-Pipeline" --use-git-aliases true'
-                        sh '''for fn in $(find . -regextype posix-egrep -regex "./.*\\w*-\\w*-*[0-9]*.yml"); do
+                        sh '''set +e ; for fn in $(find . -regextype posix-egrep -regex "./.*\\w*-\\w*-*[0-9]*.yml"); do
                         pipeline_name=$(basename $fn .yml)
-                        echo $pipeline_name;
+                        az pipelines list | grep -E "\\"name\\":\\s\\"${pipeline_name}\\","
+                        if [ $? -ne 0 ]; then
                         az pipelines create --name $pipeline_name --description 'Test of multiple yaml in one repo' --service-connection "\${ado_endpoint_id}" \
                         --repository "\${git_repo_http}" --branch master --yml-path $fn
+                        else
+                        pid=$(az pipelines list --name $pipeline_name --query  "[].id[]" | grep -E -v "\\[|\\]")
+                        az pipelines update --id $pid --description 'Test of multiple yaml in one repo' --yml-path $fn
+                        fi
                         done'''
                     }
                 }
