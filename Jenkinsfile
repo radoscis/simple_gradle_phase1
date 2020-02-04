@@ -32,15 +32,15 @@ pipeline {
                         sh '''set +e ; for fn in $(find . -regextype posix-egrep -regex "./.*\\w*-\\w*-*[0-9]*.yml"); do
                         pipeline_name=$(basename $fn .yml)
                         pipeline_ini_base=${fn%.*}
-                        az pipelines list | grep -E "\\"name\\":\\s\\"${pipeline_name}\\","
                         INI_CONTENT=$(sed "s/;/#/g;s/\\s*=\\s*/=/g;/\\[/d" ${pipeline_ini_base}.ini)
                         eval "$INI_CONTENT"
+                        az pipelines list | grep -E "\\"name\\":\\s\\"${pipeline_name}\\","
                         if [ $? -ne 0 ]; then
-                        az pipelines create --name $pipeline_name --description $pl_description --service-connection "\${ado_endpoint_id}" \
+                        az pipelines create --name $pipeline_name --description "$pl_description" --service-connection "\${ado_endpoint_id}" \
                         --repository "\${git_repo_http}" --branch master --yml-path $fn
                         else
                         pid=$(az pipelines list --name $pipeline_name --query  "[].id[]" | grep -E -v "\\[|\\]")
-                        az pipelines update --id $pid --description $pl_description --yml-path $fn
+                        az pipelines update --id $pid --description "$pl_description" --yml-path $fn
                         fi
                         done'''
                     }
